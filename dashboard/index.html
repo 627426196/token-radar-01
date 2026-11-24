@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Launch Radar — pre-token protocols ranked by implied issuance value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="pulse" aria-hidden="true"></span>
+    <h1>Token Launch Radar</h1>
+    <span class="tag">radar-2</span>
+  </div>
+  <p class="lede">Which pre-token protocol would a token launch be worth most for? Ranked by implied issuance value, from a DefiLlama snapshot — TVL, 7-day growth, age with no token, and chain breadth. Nothing else. <span id="asof"></span></p>
+  <dl class="stats" id="stats"></dl>
+</header>
+
+<main>
+  <section class="controls" aria-label="Filters">
+    <label class="ctl search">Search <input id="q" type="search" placeholder="name, slug or category" autocomplete="off"></label>
+    <label class="ctl">Category <select id="category"><option value="">All categories</option></select></label>
+    <label class="ctl">Chain <select id="chain"><option value="">All chains</option></select></label>
+    <label class="ctl">Sort <select id="sort">
+      <option value="implied">Implied value</option>
+      <option value="tvl">TVL</option>
+      <option value="growth">7-day growth</option>
+      <option value="age">Age</option>
+      <option value="chains">Chains</option>
+      <option value="name">Name</option>
+    </select></label>
+    <span class="tabs" role="tablist" aria-label="Token status">
+      <button id="tab-pre" role="tab" aria-selected="true">Pre-token</button>
+      <button id="tab-live" role="tab" aria-selected="false">Live token</button>
+    </span>
+    <label class="chk"><input type="checkbox" id="growing"> Growing only</label>
+    <label class="chk"><input type="checkbox" id="watch"> Watchlist only</label>
+    <span class="count" id="count"></span>
+  </section>
+
+  <section class="boardwrap">
+    <table id="board">
+      <thead><tr>
+        <th data-sort="implied">#</th><th data-sort="name">Protocol</th><th data-sort="tvl">TVL</th>
+        <th data-sort="growth">7d</th><th data-sort="age">Age</th><th data-sort="chains">Chains</th>
+        <th data-sort="implied">Implied value</th><th>Token</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="empty" id="empty" hidden>No protocol matches these filters.</p>
+  </section>
+
+  <section class="model" id="model">
+    <h2>How the ranking is made — model radar-2</h2>
+    <p class="formula">implied value = TVL × multiple(TVL) × growth × maturity × chains</p>
+    <div class="factors">
+      <div><h3>Size multiple</h3><p><b>0.25 × (TVL / $1B)<sup>−0.15</sup></b>, clamped 0.10–0.60. The launch multiple compresses as size grows: a $1B protocol earns 0.25×, a $100M one about 0.35×, a $10B one about 0.18×.</p></div>
+      <div><h3>Momentum</h3><p><b>1 + clamp(7d, −50%, +150%) × 0.75</b>. A launch is priced on flow: a protocol adding users fast is accumulating the base a token would monetise. Clamped hard — the snapshot has a +4,448% week, which is mostly noise.</p></div>
+      <div><h3>Seasoning</h3><p><b>0.70 + 0.30 × min(age, 3y) / 3y</b>. Days since listing, capped at three years. A protocol that has run for years with no token has survived without one; unknown listing date counts as one year.</p></div>
+      <div><h3>Reach</h3><p><b>1 + 0.05 × min(chains, 8)</b>. Each extra chain is another distribution surface for a future token. Capped at eight, so a 40-chain listing cannot buy the top of the board.</p></div>
+    </div>
+    <p class="worked" id="worked"></p>
+    <p class="limits">Limits: no names, no categories and no hard-coded lists — two protocols with the same four numbers get the same value. The 0.25× base multiple is a prior inside the observed range, not a fit: live tokens in this snapshot trade at 0.03×–1.00× TVL (25th–75th percentile), and the median is not stable across halves of the sample. Implied value is what a token would be worth <i>if it launched tomorrow</i>, not a prediction of whether or when it launches. Live-token protocols already have a market price, so they sit on a separate tab and are never ranked against pre-token rows.</p>
+  </section>
+</main>
+
+<aside class="drawer" id="drawer" aria-label="Protocol detail" hidden>
+  <button class="close" id="close" aria-label="Close detail">×</button>
+  <div id="detail"></div>
+</aside>
+<div class="scrim" id="scrim" hidden></div>
+
+<footer>Source: DefiLlama protocols snapshot, as of <span id="asof2"></span>. Floor $50M. Watchlist: TVL at or above the floor, no token recorded, not a version-named pool. Board: all 40 watchlist protocols plus every rankable pre-token protocol below the floor. This page is static — no network, no framework, no tracking.</footer>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
