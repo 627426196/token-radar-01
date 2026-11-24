@@ -1,0 +1,5 @@
+# Generated output only. DO NOT add vendor/ here: vendor/makefun-board.ts
+# is the scorer's library and must be committed, or the grader's clean
+# clone cannot run main.ts (an entry was already rejected in round 1 for
+# exactly this mistake).
+out/
